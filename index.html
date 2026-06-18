@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Token Catcher</title>
+<style>
+  body { font-family: monospace; padding: 2rem; background: #111; color: #0f0; }
+  #token { word-break: break-all; background: #222; padding: 1rem; border: 1px solid #0f0; margin: 1rem 0; font-size: 0.85rem; }
+  #status { font-size: 1.2rem; margin-bottom: 1rem; }
+  button { background: #0f0; color: #111; border: none; padding: 0.5rem 1rem; cursor: pointer; font-family: monospace; font-size: 1rem; }
+</style>
+</head>
+<body>
+<div id="status">Checking for token...</div>
+<div id="token"></div>
+<button id="copy" style="display:none" onclick="copyToken()">Copy Token</button>
+<script>
+  function copyToken() {
+    const t = document.getElementById('token').innerText;
+    navigator.clipboard.writeText(t).then(() => alert('Copied!'));
+  }
+  
+  const hash = window.location.hash.substring(1);
+  const params = new URLSearchParams(hash);
+  const token = params.get('access_token');
+  const error = params.get('error_description') || params.get('error');
+  
+  if (token) {
+    document.getElementById('status').innerText = '✅ ACCESS TOKEN:';
+    document.getElementById('token').innerText = token;
+    document.getElementById('copy').style.display = 'inline';
+  } else if (error) {
+    document.getElementById('status').innerText = '❌ Error: ' + decodeURIComponent(error);
+  } else {
+    document.getElementById('status').innerText = '⚠️ No token found in URL. Redirect here from OAuth to see token.';
+  }
+</script>
+</body>
+</html>
